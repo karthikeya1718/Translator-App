@@ -1,0 +1,9 @@
+gradio
+dateparser
+feedparser
+pygooglenews # pygooglenews --no-deps
+pandas
+textblob
+numpy
+bs4
+googletrans
