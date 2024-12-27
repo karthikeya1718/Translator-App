@@ -11,7 +11,7 @@ charset-normalizer==3.3.2
 click==8.1.7
 colorama==0.4.6
 comtypes==1.4.8
-dateparser>=1.2.1
+dateparser==1.2.0
 feedparser==6.0.8
 Flask==3.0.3
 Flask-Cors==5.0.0
