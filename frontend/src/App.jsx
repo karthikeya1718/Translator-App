@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { process } from "react-native-dotenv";
 import axios from "axios";
 import { FaSun, FaMoon } from "react-icons/fa";
 
@@ -22,10 +23,13 @@ const App = () => {
     "Kannada",
   ];
 
+
+  const BASE_URL = process.env.REACT_APP_API_URL;
+
   const fetchVoiceInput = async (setFunction) => {
     try {
       setIsListening(true);
-      const response = await axios.get("http://localhost:5000/voice-input");
+      const response = await axios.get(`${BASE_URL}/voice-input`);
       const voiceInput = response.data.voice_input;
       setFunction(voiceInput);
       setIsListening(false);
@@ -44,7 +48,7 @@ const App = () => {
 
   const handleTranslate = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/translate", {
+      const response = await axios.post(`${BASE_URL}/translate`, {
         text,
         target_language: targetLanguage,
       });
@@ -64,7 +68,7 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:5000/analyze", {
+      const response = await axios.post(`${BASE_URL}/analyze`, {
         keyword,
         language,
         target,
