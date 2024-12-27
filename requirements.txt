@@ -1,3 +1,5 @@
+pip>=22.0
+setuptools>=64.0
 aiohappyeyeballs
 aiohttp
 aiosignal
@@ -12,7 +14,7 @@ click
 colorama
 comtypes
 dateparser
-feedparser
+feedparser>=6.0.8
 Flask
 Flask-Cors
 frozenlist
