@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { process } from "react-native-dotenv";
 import axios from "axios";
 import { FaSun, FaMoon } from "react-icons/fa";
 
@@ -23,13 +22,14 @@ const App = () => {
     "Kannada",
   ];
 
-
-  const BASE_URL = process.env.REACT_APP_API_URL;
+  // const BASE_URL = import.meta.env.VITE_API_KEY;
 
   const fetchVoiceInput = async (setFunction) => {
     try {
       setIsListening(true);
-      const response = await axios.get(`${BASE_URL}/voice-input`);
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_KEY}/voice-input`
+      );
       const voiceInput = response.data.voice_input;
       setFunction(voiceInput);
       setIsListening(false);
@@ -48,10 +48,13 @@ const App = () => {
 
   const handleTranslate = async () => {
     try {
-      const response = await axios.post(`${BASE_URL}/translate`, {
-        text,
-        target_language: targetLanguage,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_KEY}/translate`,
+        {
+          text,
+          target_language: targetLanguage,
+        }
+      );
       const output = response.data.translated_text;
       setTranslatedText(output);
       speakText(output);
@@ -68,11 +71,14 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${BASE_URL}/analyze`, {
-        keyword,
-        language,
-        target,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_KEY}/analyze`,
+        {
+          keyword,
+          language,
+          target,
+        }
+      );
       setResults(response.data);
       // speakText(`Analysis completed for keyword ${keyword}`);
     } catch (error) {
