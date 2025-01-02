@@ -22,13 +22,13 @@ const App = () => {
     "Kannada",
   ];
 
-  // const BASE_URL = import.meta.env.VITE_API_KEY;
+  const BASE_URL = import.meta.env.VITE_API_KEY;
 
   const fetchVoiceInput = async (setFunction) => {
     try {
       setIsListening(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_KEY}/voice-input`
+        `${BASE_URL}/voice-input`
       );
       const voiceInput = response.data.voice_input;
       setFunction(voiceInput);
@@ -49,7 +49,7 @@ const App = () => {
   const handleTranslate = async () => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_KEY}/translate`,
+        `${BASE_URL}/translate`,
         {
           text,
           target_language: targetLanguage,
@@ -72,7 +72,7 @@ const App = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_KEY}/analyze`,
+        `${BASE_URL}/analyze`,
         {
           keyword,
           language,
