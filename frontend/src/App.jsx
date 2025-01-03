@@ -22,14 +22,10 @@ const App = () => {
     "Kannada",
   ];
 
-  const BASE_URL = import.meta.env.VITE_API_KEY;
-
   const fetchVoiceInput = async (setFunction) => {
     try {
       setIsListening(true);
-      const response = await axios.get(
-        `${BASE_URL}/voice-input`
-      );
+      const response = await axios.get("http://localhost:5000/voice-input");
       const voiceInput = response.data.voice_input;
       setFunction(voiceInput);
       setIsListening(false);
@@ -48,13 +44,10 @@ const App = () => {
 
   const handleTranslate = async () => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/translate`,
-        {
-          text,
-          target_language: targetLanguage,
-        }
-      );
+      const response = await axios.post("http://localhost:5000/translate", {
+        text,
+        target_language: targetLanguage,
+      });
       const output = response.data.translated_text;
       setTranslatedText(output);
       speakText(output);
@@ -71,14 +64,11 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${BASE_URL}/analyze`,
-        {
-          keyword,
-          language,
-          target,
-        }
-      );
+      const response = await axios.post("http://127.0.0.1:5000/analyze", {
+        keyword,
+        language,
+        target,
+      });
       setResults(response.data);
       // speakText(`Analysis completed for keyword ${keyword}`);
     } catch (error) {
@@ -417,3 +407,236 @@ const App = () => {
 };
 
 export default App;
+
+// const App = () => {
+//   const [keyword, setKeyword] = useState("");
+//   const [language, setLanguage] = useState("Telugu");
+//   const [target, setTarget] = useState("en");
+//   const [results, setResults] = useState([]);
+//   const [text, setText] = useState("");
+//   const [targetLanguage, setTargetLanguage] = useState("en");
+//   const [translatedText, setTranslatedText] = useState("");
+//   const [isListening, setIsListening] = useState(false);
+//   const [isListeningKeyword, setIsListeningKeyword] = useState(false);
+
+//   const languages = ["Telugu", "Hindi", "Tamil", "Malayalam", "Kannada"];
+
+//   useEffect(() => {
+//     if (!("webkitSpeechRecognition" in window)) {
+//       console.error("Browser doesn't support SpeechRecognition API");
+//     }
+//   }, []);
+
+//   const handleVoiceInput = (setFunction) => {
+//     if ("webkitSpeechRecognition" in window) {
+//       const recognition = new window.webkitSpeechRecognition();
+//       recognition.lang = "en-US";
+//       recognition.interimResults = false;
+//       recognition.onstart = () => setIsListening(true);
+//       recognition.onend = () => setIsListening(false);
+//       recognition.onresult = (event) => {
+//         const voiceInput = event.results[0][0].transcript;
+//         setFunction(voiceInput);
+//       };
+//       recognition.start();
+//     }
+//   };
+
+//   const speakText = (output) => {
+//     const synth = window.speechSynthesis;
+//     const utterance = new SpeechSynthesisUtterance(output);
+//     utterance.lang = "en-US";
+//     synth.speak(utterance);
+//   };
+
+//   const handleTranslate = async () => {
+//     try {
+//       const response = await axios.post("http://localhost:5000/translate", {
+//         text,
+//         target_language: targetLanguage,
+//       });
+//       const output = response.data.translated_text;
+//       setTranslatedText(output);
+//       speakText(output);
+//     } catch (error) {
+//       console.error("Error translating text:", error);
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const response = await axios.post("http://127.0.0.1:5000/analyze", {
+//         keyword,
+//         language,
+//         target,
+//       });
+//       setResults(response.data);
+//       speakText(`Analysis completed for keyword ${keyword}`);
+//     } catch (error) {
+//       console.error("Error fetching data:", error);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-8 font-sans">
+//       <h1 className="text-6xl font-bold text-center text-white mb-12 drop-shadow-lg animate-bounce">
+//         Fancy Translator & Analyzer App
+//       </h1>
+
+//       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//         {/* Translation Section */}
+//         <div className="bg-white rounded-lg shadow-lg p-6">
+//           <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+//             Translation
+//           </h2>
+//           <textarea
+//             value={text}
+//             onChange={(e) => setText(e.target.value)}
+//             placeholder="Enter text to translate or use voice input"
+//             className="w-full h-32 border-2 border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+//           ></textarea>
+//           <div className="flex items-center justify-between mt-4">
+//             <button
+//               onClick={() => handleVoiceInput(setText)}
+//               className={`bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 flex items-center ${
+//                 isListening ? "animate-pulse" : ""
+//               }`}
+//             >
+//               🎤 {isListening ? "Listening..." : "Voice Input"}
+//             </button>
+//             <select
+//               value={targetLanguage}
+//               onChange={(e) => setTargetLanguage(e.target.value)}
+//               className="w-1/2 border-2 border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+//             >
+//               <option value="en">English</option>
+//               <option value="te">Telugu</option>
+//               <option value="hi">Hindi</option>
+//               <option value="ta">Tamil</option>
+//               <option value="ml">Malayalam</option>
+//               <option value="kn">Kannada</option>
+//             </select>
+//           </div>
+//           <button
+//             onClick={handleTranslate}
+//             className="w-full mt-4 bg-gradient-to-r from-green-400 to-blue-400 text-white font-bold py-2 px-4 rounded-lg hover:from-green-500 hover:to-blue-500 focus:ring-4 focus:ring-blue-300"
+//           >
+//             Translate
+//           </button>
+//           {translatedText && (
+//             <div className="mt-6">
+//               <h3 className="text-xl font-semibold text-gray-700">
+//                 Translated Text:
+//               </h3>
+//               <p className="mt-2 p-4 bg-gray-100 rounded-lg text-gray-800 shadow-md">
+//                 {translatedText}
+//               </p>
+//             </div>
+//           )}
+//         </div>
+
+//         {/* Analysis Section */}
+//         <div className="bg-white rounded-lg shadow-lg p-6">
+//           <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+//             Keyword Analysis
+//           </h2>
+//           <form onSubmit={handleSubmit} className="space-y-4">
+//             <div className="flex items-center">
+//               <input
+//                 type="text"
+//                 placeholder="Enter Keyword"
+//                 value={keyword}
+//                 onChange={(e) => setKeyword(e.target.value)}
+//                 required
+//                 className="w-full border-2 border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+//               />
+//               <button
+//                 type="button"
+//                 onClick={() => handleVoiceInput(setKeyword)}
+//                 className={`ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 flex items-center ${
+//                   isListeningKeyword ? "animate-pulse" : ""
+//                 }`}
+//               >
+//                 🎤
+//               </button>
+//             </div>
+//             <select
+//               value={language}
+//               onChange={(e) => setLanguage(e.target.value)}
+//               className="w-full border-2 border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+//             >
+//               {languages.map((lang) => (
+//                 <option key={lang} value={lang}>
+//                   {lang}
+//                 </option>
+//               ))}
+//             </select>
+//             <select
+//               value={target}
+//               onChange={(e) => setTarget(e.target.value)}
+//               className="w-full border-2 border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+//             >
+//               <option value="en">English</option>
+//               <option value="te">Telugu</option>
+//               <option value="hi">Hindi</option>
+//               <option value="ta">Tamil</option>
+//               <option value="ml">Malayalam</option>
+//               <option value="kn">Kannada</option>
+//             </select>
+//             <button
+//               type="submit"
+//               className="w-full bg-gradient-to-r from-teal-400 to-lime-400 text-white font-bold py-2 px-4 rounded-lg hover:from-teal-500 hover:to-lime-500 focus:ring-4 focus:ring-lime-300"
+//             >
+//               Analyze
+//             </button>
+//           </form>
+//         </div>
+//       </div>
+
+//       {/* Results Table */}
+//       {results.length > 0 && (
+//         <div className="mt-12 bg-white rounded-lg shadow-lg p-6">
+//           <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+//             Analysis Results
+//           </h2>
+//           <div className="overflow-x-auto">
+//             <table className="min-w-full bg-white rounded-lg shadow-md">
+//               <thead className="bg-gray-800 text-white">
+//                 <tr>
+//                   <th className="py-3 px-4 text-left">Title</th>
+//                   <th className="py-3 px-4 text-left">Translation</th>
+//                   <th className="py-3 px-4 text-left">Link</th>
+//                   <th className="py-3 px-4 text-left">Sentiment</th>
+//                   <th className="py-3 px-4 text-left">Sentiment Class</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {results.map((result, index) => (
+//                   <tr key={index} className="border-b hover:bg-gray-100">
+//                     <td className="py-3 px-4">{result.title}</td>
+//                     <td className="py-3 px-4">{result.translation}</td>
+//                     <td className="py-3 px-4">
+//                       <a
+//                         href={result.link}
+//                         target="_blank"
+//                         rel="noopener noreferrer"
+//                         className="text-blue-500 underline hover:text-blue-700"
+//                       >
+//                         Link
+//                       </a>
+//                     </td>
+//                     <td className="py-3 px-4">{result.sentiment}</td>
+//                     <td className="py-3 px-4">{result["Sentiment Class"]}</td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default App;
